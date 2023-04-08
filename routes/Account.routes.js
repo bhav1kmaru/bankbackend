@@ -123,8 +123,8 @@ accRouter.get('/:panNo',async(req,res)=>{
 
 })
 
-accRouter.delete('/delete',async(req,res)=>{
-    const {id}=req.body
+accRouter.delete('/delete/:id',async(req,res)=>{
+    const {id}=req.params
     const account=await AccountModel.findByIdAndDelete(id)
     if(!account){
         return res.status(400).send({message:'Account not found'})
