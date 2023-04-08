@@ -38,7 +38,7 @@ accRouter.put('/deposit',async(req,res)=>{
     if(!account){
         res.status(404).send('Account not found')
     }else{
-        account.balance += amount;
+        account.balance += +amount;
         account.transactions.push({
           type: "credit",
           amount: amount,
@@ -59,7 +59,7 @@ accRouter.put('/withdraw',async(req,res)=>{
     if(account.balance<amount){
       return  res.status(400).send('Insufficient Balance')
     }else{
-        account.balance-=amount
+        account.balance-=+amount
         account.transactions.push({
             type:"debit",
             amount:amount,
