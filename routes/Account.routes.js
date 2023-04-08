@@ -36,7 +36,7 @@ accRouter.put('/deposit',async(req,res)=>{
     const {id,amount}=req.body
     const account=await AccountModel.findById(id)
     if(!account){
-        res.status(404).send('Account not found')
+        res.status(404).send({message:'Account not found'})
     }else{
         account.balance += +amount;
         account.transactions.push({
@@ -45,7 +45,7 @@ accRouter.put('/deposit',async(req,res)=>{
           date: new Date(),
         });
         await account.save();
-        res.send("Amount Deposited Successfully");
+        res.send({message:"Amount Deposited Successfully"});
     }
     
 })
@@ -54,10 +54,10 @@ accRouter.put('/withdraw',async(req,res)=>{
     const {id,amount}=req.body
     const account = await AccountModel.findById(id);
     if (!account) {
-      return res.status(404).send("Account not found");
+      return res.status(404).send({message:'Account not found'})
     }
     if(account.balance<amount){
-      return  res.status(400).send('Insufficient Balance')
+      return  res.status(400).send({message:"Insufficient Balance"})
     }else{
         account.balance-=+amount
         account.transactions.push({
@@ -66,26 +66,26 @@ accRouter.put('/withdraw',async(req,res)=>{
             date:new Date()
         })
         await account.save()
-        res.send('Withdrawn Successfully');
+        res.send({message:'Withdrawn Successfully'});
     }
 })
 
 accRouter.put('/transfer',async(req,res)=>{
     const fromAccount=await AccountModel.findById(req.body.id)
     if(!fromAccount){
-        return res.status(404).send('Account not found')
+        return res.status(404).send({message:'Account not found'})
     }
 
     const toAccount=await AccountModel.findOne({panNo:req.body.panNo})
     if(!toAccount){
-        return res.status(404).send("Recepient not found");
+        return res.status(404).send({message:'Recepient not found'});
     }
 
     const amount=req.body.amount
     if(fromAccount.balance<amount){
-        return res.status(400).send('Insufficient Balance')
+        return res.status(400).send({message:"Insufficient Balance"})
     }
-    fromAccount.balance-=amount
+    fromAccount.balance-=+amount
     fromAccount.transactions.push({
         type:'debit',
         amount:amount,
@@ -96,7 +96,7 @@ accRouter.put('/transfer',async(req,res)=>{
             panNo:req.body.panNo
         }
     })
-    toAccount.balance+=amount
+    toAccount.balance+=+amount
     toAccount.transactions.push({
         type:"credit",
         amount:amount,
@@ -109,14 +109,14 @@ accRouter.put('/transfer',async(req,res)=>{
     })
     await fromAccount.save()
     await toAccount.save()
-    res.send('Amount transferred successfully')
+    res.send({message:'Amount transferred successfully'})
 })
 
 accRouter.get('/:panNo',async(req,res)=>{
     const {panNo}=req.params
     const account=await AccountModel.findOne({panNo})
     if(!account){
-        res.status(400).send('Account not found')
+        res.status(400).send({message:'Account not found'})
     }else{
         res.send(account)
     }
@@ -127,9 +127,9 @@ accRouter.delete('/delete',async(req,res)=>{
     const {id}=req.body
     const account=await AccountModel.findByIdAndDelete(id)
     if(!account){
-        return res.status(400).send('Account not found')
+        return res.status(400).send({message:'Account not found'})
     }
-    res.send('Account closed successfully')
+    res.send({message:'Account closed successfully'})
 })
 
 module.exports ={accRouter}
