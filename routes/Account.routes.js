@@ -112,8 +112,8 @@ accRouter.put('/transfer',async(req,res)=>{
     res.send('Amount transferred successfully')
 })
 
-accRouter.get('/',async(req,res)=>{
-    const {panNo}=req.body
+accRouter.get('/:panNo',async(req,res)=>{
+    const {panNo}=req.params
     const account=await AccountModel.findOne({panNo})
     if(!account){
         res.status(400).send('Account not found')
